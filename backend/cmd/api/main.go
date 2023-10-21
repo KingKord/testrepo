@@ -1,11 +1,25 @@
 package main
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
-const webPort = 80
+const webPort = "8080"
+
+type Config struct{}
 
 func main() {
-	serv := &http.Server{}
+	app := Config{}
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%s", webPort),
+		Handler: app.getRoutes(),
+	}
+
 	println("Starting web server on port", webPort)
-	serv.ListenAndServe()
+	err := srv.ListenAndServe()
+	if err != nil {
+		panic(err)
+	}
 }
