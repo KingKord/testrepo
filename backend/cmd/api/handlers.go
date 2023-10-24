@@ -202,3 +202,43 @@ func (app *Config) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	app.writeJSON(w, http.StatusOK, payload)
 }
+
+func (app *Config) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	log.Println("Update URL hit")
+	var requestPayload struct {
+		ID          string `json:"id"`
+		Name        string `json:"name"`
+		Surname     string `json:"surname"`
+		Patronymic  string `json:"patronymic,omitempty"`
+		Age         string `json:"age,omitempty"`
+		Gender      string `json:"gender,omitempty"`
+		Nationality string `json:"nationality,omitempty"`
+	}
+
+	err := app.readJSON(w, r, &requestPayload)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	id, _ := strconv.Atoi(requestPayload.ID)
+	age, _ := strconv.Atoi(requestPayload.Age)
+	user := data.User{
+		ID:          id,
+		Name:        requestPayload.Name,
+		Surname:     requestPayload.Surname,
+		Patronymic:  requestPayload.Patronymic,
+		Age:         age,
+		Gender:      requestPayload.Age,
+		Nationality: requestPayload.Nationality,
+	}
+	err = user.Update()
+	if err != nil {
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: fmt.Sprintf("User under ID:%d updated", user.ID),
+	}
+	app.writeJSON(w, http.StatusOK, payload)
+}

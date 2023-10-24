@@ -87,7 +87,7 @@ func (u *User) GetAll(perPage, page int) ([]*User, error) {
 	defer cancel()
 
 	query := `select id, name, surname, patronymic, age, gender, nationality
-	from users limit $1 offset $2`
+	from users order by id limit $1 offset $2`
 
 	offset := (page - 1) * perPage
 
@@ -126,7 +126,7 @@ func (u *User) GetAllUsersByGender(gender string, perPage, page int) ([]*User, e
 	defer cancel()
 
 	query := `select id, name, surname, patronymic, age, gender, nationality
-	from users where gender = $1 limit $2 offset $3`
+	from users where gender = $1 order by id limit $2 offset $3`
 	offset := (page - 1) * perPage
 
 	rows, err := db.QueryContext(ctx, query, gender, perPage, offset)
@@ -172,4 +172,35 @@ func (u *User) DeleteByID(id int) error {
 
 	return nil
 
+}
+
+func (u *User) Update() error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+	//id, name, surname, patronymic, age, gender, nationality
+	stmt := `update users set
+		name = $1,
+		surname = $2,
+		patronymic = $3,
+		age = $4,
+		gender = $5,
+		nationality = $6
+		where id = $7
+	`
+
+	_, err := db.ExecContext(ctx, stmt,
+		u.Name,
+		u.Surname,
+		u.Patronymic,
+		u.Age,
+		u.Gender,
+		u.Nationality,
+		u.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

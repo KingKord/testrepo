@@ -24,7 +24,7 @@ func (app *Config) getRoutes() http.Handler {
 	mux.Post("/new", app.PostNewUser)
 	mux.Get("/users", app.GetAllUsers)
 	mux.Delete("/delete", app.DeleteUser)
-	//mux.Put("/users", app.DeleteUser)
+	mux.Put("/update", app.UpdateUser)
 
 	return mux
 }

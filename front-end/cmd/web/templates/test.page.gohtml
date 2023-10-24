@@ -42,6 +42,26 @@
                     </div>
                 </div>
 
+                <div class="row mt-1">
+                    <div class="col">
+                        <a href="javascript:void(0)" id="update" class="btn btn-outline-secondary">Test Update</a>
+                        <label for="PutID">Enter ID:</label>
+                        <input type="text" id="PutID" name="PutID">
+                        <label for="namePut">Enter name:</label>
+                        <input type="text" id="namePut" name="namePut">
+                        <label for="surnamePut">Enter surname:</label>
+                        <input type="text" id="surnamePut" name="surnamePut">
+                        <label for="patronymicPut">Enter patronymic:</label>
+                        <input type="text" id="patronymicPut" name="patronymicPut">
+                        <label for="agePut">Enter age:</label>
+                        <input type="text" id="agePut" name="agePut">
+                        <label for="genderPut">Enter gender:</label>
+                        <input type="text" id="genderPut" name="genderPut">
+                        <label for="nationalityPut">Enter nationality:</label>
+                        <input type="text" id="nationalityPut" name="nationalityPut">
+                    </div>
+                </div>
+
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
                 </div>
@@ -66,16 +86,17 @@
 
 {{define "js"}}
     <script>
-        let checkBackend = document.getElementById("checkBackend");
-        let addNewUser = document.getElementById("addNewUser");
-        let checkGet = document.getElementById("checkGet");
+        let checkBackendBtn = document.getElementById("checkBackend");
+        let addNewUserBtn = document.getElementById("addNewUser");
+        let checkGetBtn = document.getElementById("checkGet");
+        let updateBtn = document.getElementById("update");
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
         let received = document.getElementById("received");
         let deleteBtn = document.getElementById("delete");
 
 
-        addNewUser.addEventListener("click", function () {
+        addNewUserBtn.addEventListener("click", function () {
             const payload = {
                 name: document.getElementById("info").value,
                 surname: document.getElementById("surname").value,
@@ -107,8 +128,44 @@
                     output.innerHTML += "<br><br>Error: " + error;
                 })
         })
+        updateBtn.addEventListener("click", function () {
+            const payload = {
+                id: document.getElementById("PutID").value,
+                name: document.getElementById("namePut").value,
+                surname: document.getElementById("surnamePut").value,
+                patronymic: document.getElementById("patronymicPut").value,
+                age: document.getElementById("agePut").value,
+                gender: document.getElementById("genderPut").value,
+                nationality: document.getElementById("nationalityPut").value,
+            }
 
-        checkGet.addEventListener("click", function () {
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+
+            const body = {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+                headers: headers,
+            }
+
+            fetch("http:\/\/localhost:8080/update", body)
+                .then((response) => response.json())
+                .then((data) => {
+                    sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                    received.innerHTML = JSON.stringify(data, undefined, 4);
+                    if (data.error) {
+                        output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;
+                    } else {
+                        output.innerHTML += `<br><strong>Response from backend</strong>: ${data.message}`;
+                    }
+                })
+                .catch((error) => {
+                    output.innerHTML += "<br><br>Error: " + error;
+                })
+        })
+
+        checkGetBtn.addEventListener("click", function () {
             const body = {
                 method: 'GET',
             }
@@ -158,7 +215,7 @@
                     output.innerHTML += "<br><br>Error: " + error;
                 })
         })
-        checkBackend.addEventListener("click", function () {
+        checkBackendBtn.addEventListener("click", function () {
 
             const body = {
                 method: 'POST'
