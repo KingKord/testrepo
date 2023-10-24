@@ -82,14 +82,16 @@ func GetInfoFromOpenAPI(URL string) (*http.Response, error) {
 	return response, nil
 }
 
-func (u *User) GetAll() ([]*User, error) {
+func (u *User) GetAll(perPage, page int) ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
 	query := `select id, name, surname, patronymic, age, gender, nationality
-	from users `
+	from users limit $1 offset $2`
 
-	rows, err := db.QueryContext(ctx, query)
+	offset := (page - 1) * perPage
+
+	rows, err := db.QueryContext(ctx, query, perPage, offset)
 	if err != nil {
 		return nil, err
 	}

@@ -140,11 +140,26 @@ func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		} else if page != "" {
 			p, _ := strconv.Atoi(page)
 			users, err = user.GetAllUsersByGender(gender, 2, p)
+		} else if limit != "" {
+			l, _ := strconv.Atoi(limit)
+			users, err = user.GetAllUsersByGender(gender, l, 1)
 		} else {
 			users, err = user.GetAllUsersByGender(gender, 100, 1)
 		}
 	} else {
-		users, err = user.GetAll()
+		if page != "" && limit != "" {
+			p, _ := strconv.Atoi(page)
+			l, _ := strconv.Atoi(limit)
+			users, err = user.GetAll(l, p)
+		} else if page != "" {
+			p, _ := strconv.Atoi(page)
+			users, err = user.GetAll(2, p)
+		} else if limit != "" {
+			l, _ := strconv.Atoi(limit)
+			users, err = user.GetAll(l, 1)
+		} else {
+			users, err = user.GetAll(100, 1)
+		}
 	}
 
 	if err != nil {
