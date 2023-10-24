@@ -6,8 +6,23 @@
             <div class="col">
                 <h1 class="mt-5">Test backend</h1>
                 <hr>
-                <a href="javascript:void(0)" id="checkBackend" class="btn btn-outline-secondary">Test Backend</a>
-                <a href="javascript:void(0)" id="addNewUser" class="btn btn-outline-secondary">Test addNewUser</a>
+                <div class="row">
+                    <div class="col">
+                        <a href="javascript:void(0)" id="checkBackend" class="btn btn-outline-secondary">Test Backend</a>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                        <a href="javascript:void(0)" id="addNewUser" class="btn btn-outline-secondary">Test addNewUser</a>
+                        <label for="info">Enter Name:</label>
+                        <input type="text" id="info" name="info">
+                        <label for="surname">Enter Surname:</label>
+                        <input type="text" id="surname" name="surname">
+                        <label for="patronymic">Enter Patronymic:</label>
+                        <input type="text" id="patronymic" name="patronymic">
+                    </div>
+                </div>
+
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -42,8 +57,9 @@
 
         addNewUser.addEventListener("click", function () {
             const payload = {
-                name: "Dmitriy",
-                surname: "Ushakov",
+                name: document.getElementById("info").value,
+                surname: document.getElementById("surname").value,
+                patronymic: document.getElementById("patronymic").value,
             }
 
             const headers = new Headers();

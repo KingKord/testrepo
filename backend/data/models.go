@@ -55,6 +55,7 @@ func (u *User) Insert(user User) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	u.ID = newID
 
 	return newID, nil
 }
