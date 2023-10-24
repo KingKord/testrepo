@@ -22,16 +22,16 @@
                         <input type="text" id="patronymic" name="patronymic">
                     </div>
                 </div>
+
                 <div class="row mt-1">
                     <div class="col">
-                        <a href="javascript:void(0)" id="checkGetAll" class="btn btn-outline-secondary">Test checkGetAll</a>
-                    </div>
-                </div>
-                <div class="row mt-1">
-                    <div class="col">
-                        <a href="javascript:void(0)" id="checkGetAllByGender" class="btn btn-outline-secondary">Test checkGetAllByGender</a>
+                        <a href="javascript:void(0)" id="checkGet" class="btn btn-outline-secondary">Test GetAll</a>
                         <label for="gender">Enter Gender:</label>
                         <input type="text" id="gender" name="gender">
+                        <label for="page">Enter Page:</label>
+                        <input type="text" id="page" name="page">
+                        <label for="limit">Enter Amount Per Page:</label>
+                        <input type="text" id="limit" name="limit">
                     </div>
                 </div>
 
@@ -61,8 +61,7 @@
     <script>
         let checkBackend = document.getElementById("checkBackend");
         let addNewUser = document.getElementById("addNewUser");
-        let checkGetAll = document.getElementById("checkGetAll");
-        let checkGetAllByGender = document.getElementById("checkGetAllByGender");
+        let checkGet = document.getElementById("checkGet");
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
         let received = document.getElementById("received");
@@ -101,38 +100,42 @@
                 })
         })
 
-        checkGetAll.addEventListener("click", function () {
-
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json");
-
-
+        checkGet.addEventListener("click", function () {
             const body = {
                 method: 'GET',
             }
-
-            fetch("http:\/\/localhost:8080/users", body)
-                .then((response) => response.json())
-                .then((data) => {
-                    sent.innerHTML = "empty get request";
-                    received.innerHTML = JSON.stringify(data, undefined, 4);
-                    if (data.error) {
-                        output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;
-                    } else {
-                        output.innerHTML += `<br><strong>Response from backend</strong>: ${data.message}`;
-                    }
-                })
-                .catch((error) => {
-                    output.innerHTML += "<br><br>Error: " + error;
-                })
-        })
-
-        checkGetAllByGender.addEventListener("click", function () {
-            const body = {
-                method: 'GET',
+            let URL = "http:\/\/localhost:8080/users"
+            let gender = document.getElementById("gender").value
+            let page = document.getElementById("page").value
+            let limit = document.getElementById("limit").value
+            if (gender !== "" || page !== "" || limit !== "") {
+                URL += "?"
             }
+            if (gender !== "") {
+                URL += "gender=" + gender
+                if (limit !== "" || page !== "") {
+                    URL += "&"
+                }
+            }
+            if (page !== "") {
+                URL += "page=" + page
+                if (limit !== "") {
+                    URL += "&"
+                }
+            }
+            if (limit !== "") {
+                URL += "limit=" + limit
+            }
+            console.log(URL)
 
-            fetch("http:\/\/localhost:8080/users?gender=" + document.getElementById("gender").value, body)
+
+            // if (document.getElementById("pageGender").value !== "") {
+            //
+            // }
+            fetch(URL
+                // + "&page=" + document.getElementById("pageGender").value
+                // + "&limit=" + document.getElementById("limitGender")
+                , body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = "empty get request";

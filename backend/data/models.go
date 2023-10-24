@@ -87,7 +87,7 @@ func (u *User) GetAll() ([]*User, error) {
 	defer cancel()
 
 	query := `select id, name, surname, patronymic, age, gender, nationality
-	from users order by name`
+	from users `
 
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
@@ -119,14 +119,15 @@ func (u *User) GetAll() ([]*User, error) {
 	return users, nil
 }
 
-func (u *User) GetAllUsersByGender(gender string) ([]*User, error) {
+func (u *User) GetAllUsersByGender(gender string, perPage, page int) ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
 	query := `select id, name, surname, patronymic, age, gender, nationality
-	from users where gender = $1 order by name`
+	from users where gender = $1 limit $2 offset $3`
+	offset := (page - 1) * perPage
 
-	rows, err := db.QueryContext(ctx, query, gender)
+	rows, err := db.QueryContext(ctx, query, gender, perPage, offset)
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func (app *Config) HeartBeat(w http.ResponseWriter, r *http.Request) {
@@ -125,15 +126,27 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	// Get parameter "gender" from URL
 	gender := r.URL.Query().Get("gender")
+	page := r.URL.Query().Get("page")
+	limit := r.URL.Query().Get("limit")
 	var user data.User
 	var users []*data.User
 	var err error
 
 	if gender != "" {
-		users, err = user.GetAllUsersByGender(gender)
+		if page != "" && limit != "" {
+			p, _ := strconv.Atoi(page)
+			l, _ := strconv.Atoi(limit)
+			users, err = user.GetAllUsersByGender(gender, l, p)
+		} else if page != "" {
+			p, _ := strconv.Atoi(page)
+			users, err = user.GetAllUsersByGender(gender, 2, p)
+		} else {
+			users, err = user.GetAllUsersByGender(gender, 100, 1)
+		}
 	} else {
 		users, err = user.GetAll()
 	}
+
 	if err != nil {
 		app.errorJSON(w, err, http.StatusBadRequest)
 		return
