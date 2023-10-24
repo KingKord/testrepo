@@ -34,6 +34,13 @@
                         <input type="text" id="limit" name="limit">
                     </div>
                 </div>
+                <div class="row mt-1">
+                    <div class="col">
+                        <a href="javascript:void(0)" id="delete" class="btn btn-outline-secondary">Test Deletion</a>
+                        <label for="id">Enter user's ID to delete:</label>
+                        <input type="text" id="id" name="id">
+                    </div>
+                </div>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -65,6 +72,7 @@
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
         let received = document.getElementById("received");
+        let deleteBtn = document.getElementById("delete");
 
 
         addNewUser.addEventListener("click", function () {
@@ -160,6 +168,29 @@
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = "empty post request";
+                    received.innerHTML = JSON.stringify(data, undefined, 4);
+                    if (data.error) {
+                        console.log(data.message)
+                    } else {
+                        output.innerHTML += `<br><strong>Response from backend</strong>: ${data.message}`;
+                    }
+                })
+                .catch((error) => {
+                    output.innerHTML += "<br><br>Error: " + error;
+                })
+        })
+        deleteBtn.addEventListener("click", function () {
+            console.log(document.getElementById("id").value)
+
+
+            const body = {
+                method: 'DELETE',
+            }
+
+            fetch("http:\/\/localhost:8080/delete?id="+ document.getElementById("id").value, body)
+                .then((response) => response.json())
+                .then((data) => {
+                    sent.innerHTML = "empty delete request";
                     received.innerHTML = JSON.stringify(data, undefined, 4);
                     if (data.error) {
                         console.log(data.message)

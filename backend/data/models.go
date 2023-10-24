@@ -159,7 +159,17 @@ func (u *User) GetAllUsersByGender(gender string, perPage, page int) ([]*User, e
 	return users, nil
 }
 
-func GetUserByName(name string) User {
+func (u *User) DeleteByID(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
 
-	return User{}
+	stmt := `delete from users where id = $1`
+
+	_, err := db.ExecContext(ctx, stmt, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }

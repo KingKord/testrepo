@@ -178,3 +178,27 @@ func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	app.writeJSON(w, http.StatusOK, payload)
 }
+
+func (app *Config) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	log.Println("Delete URL hit")
+
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	var user data.User
+
+	err = user.DeleteByID(id)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: fmt.Sprintf("User under ID:%d deleted", id),
+	}
+	app.writeJSON(w, http.StatusOK, payload)
+}
