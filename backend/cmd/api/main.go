@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/data"
 	"database/sql"
 	"fmt"
 	"log"
@@ -8,6 +9,8 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -28,6 +31,8 @@ func main() {
 	if conn == nil {
 		log.Panic("can't connect to postgres")
 	}
+
+	data.MigrateUp()
 
 	// set up config
 	app := Config{

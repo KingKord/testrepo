@@ -39,3 +39,5 @@ down:
 	@echo "Stopping docker images..."
 	docker-compose down
 	@echo "Docker stopped!"
+
+restart: down up_build
