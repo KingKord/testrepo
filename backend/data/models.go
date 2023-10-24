@@ -2,6 +2,9 @@ package data
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -22,13 +25,40 @@ type User struct {
 	Name        string `json:"name"`
 	Surname     string `json:"surname"`
 	Patronymic  string `json:"patronymic,omitempty"`
-	Agify       string `json:"agify,omitempty"`
+	Agify       int    `json:"agify,omitempty"`
 	Genderize   string `json:"genderize,omitempty"`
 	Nationalize string `json:"nationalize"`
 }
 
 type Models struct {
 	User User
+}
+
+func (u *User) Insert(user User) (int, error) {
+	//ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	//defer cancel()
+	return 1, nil
+}
+
+func GetInfoFromOpenAPI(URL string) (*http.Response, error) {
+	request, err := http.NewRequest("GET", URL, nil)
+	if err != nil {
+		return nil, err
+	}
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return nil, errors.New("can't get info from API")
+	}
+
+	fmt.Println("URL:", URL)
+	fmt.Println("Response Status:", response.Status)
+
+	return response, nil
 }
 
 func GetUserByName(name string) User {
