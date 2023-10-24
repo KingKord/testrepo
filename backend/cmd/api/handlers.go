@@ -61,7 +61,7 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, errors.New("API returned non-OK status code: "+ageFromAPI.Status), http.StatusBadRequest)
 		return
 	}
-	user.Agify = jsonFromService.Age
+	user.Age = jsonFromService.Age
 	log.Println("Successfully got age from open API")
 
 	// req to openAPI for gender
@@ -78,7 +78,7 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, errors.New("API returned non-OK status code: "+genderFromAPI.Status), http.StatusBadRequest)
 		return
 	}
-	user.Genderize = jsonFromService.Gender
+	user.Gender = jsonFromService.Gender
 	log.Println("Successfully got Gender from open API")
 	// req to openAPI for nationality
 	nationalityFromAPI, err := data.GetInfoFromOpenAPI(fmt.Sprintf("https://api.nationalize.io/?name=%s", user.Name))
@@ -105,7 +105,7 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 			mostProbableCountry = country.CountryID
 		}
 	}
-	user.Nationalize = mostProbableCountry
+	user.Nationality = mostProbableCountry
 
 	// in the end insert new user to the DB
 	user.ID, err = user.Insert(user)
@@ -115,7 +115,7 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 	}
 	payload := jsonResponse{
 		Error:   false,
-		Message: fmt.Sprintf("Add to DB user %s %d %s %s %d", jsonFromService.Name, user.Agify, user.Genderize, user.Nationalize, user.ID),
+		Message: fmt.Sprintf("Add to DB user %s %d %s %s %d", jsonFromService.Name, user.Age, user.Gender, user.Nationality, user.ID),
 		Data:    user,
 	}
 

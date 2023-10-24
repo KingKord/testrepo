@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -26,9 +27,9 @@ type User struct {
 	Name        string `json:"name"`
 	Surname     string `json:"surname"`
 	Patronymic  string `json:"patronymic,omitempty"`
-	Agify       int    `json:"agify,omitempty"`
-	Genderize   string `json:"genderize,omitempty"`
-	Nationalize string `json:"nationalize"`
+	Age         int    `json:"age,omitempty"`
+	Gender      string `json:"gender,omitempty"`
+	Nationality string `json:"nationality,omitempty"`
 }
 
 type Models struct {
@@ -40,16 +41,16 @@ func (u *User) Insert(user User) (int, error) {
 	defer cancel()
 
 	var newID int
-	stmt := `insert into users (name, surname, patronymic, agify, genderize, nationalize)
+	stmt := `insert into users (name, surname, patronymic, age, gender, nationality)
 		values ($1, $2, $3, $4, $5, $6) returning id`
 
 	err := db.QueryRowContext(ctx, stmt,
 		user.Name,
 		user.Surname,
 		user.Patronymic,
-		string(rune(user.Agify)),
-		user.Genderize,
-		user.Nationalize,
+		string(rune(user.Age)),
+		user.Gender,
+		user.Nationality,
 	).Scan(&newID)
 
 	if err != nil {
@@ -79,6 +80,43 @@ func GetInfoFromOpenAPI(URL string) (*http.Response, error) {
 	fmt.Println("Response Status:", response.Status)
 
 	return response, nil
+}
+
+func (u *User) GetAll() ([]*User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `select id, name, surname, patronymic, agify, genderize, nationalize
+	from users order by name`
+
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*User
+
+	for rows.Next() {
+		var user User
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Surname,
+			&user.Patronymic,
+			&user.Age,
+			&user.Gender,
+			&user.Nationality,
+		)
+		if err != nil {
+			log.Println("Error scanning", err)
+			return nil, err
+		}
+
+		users = append(users, &user)
+	}
+
+	return users, nil
 }
 
 func GetUserByName(name string) User {
