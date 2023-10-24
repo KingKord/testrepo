@@ -27,7 +27,13 @@
                         <a href="javascript:void(0)" id="checkGetAll" class="btn btn-outline-secondary">Test checkGetAll</a>
                     </div>
                 </div>
-
+                <div class="row mt-1">
+                    <div class="col">
+                        <a href="javascript:void(0)" id="checkGetAllByGender" class="btn btn-outline-secondary">Test checkGetAllByGender</a>
+                        <label for="gender">Enter Gender:</label>
+                        <input type="text" id="gender" name="gender">
+                    </div>
+                </div>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -56,6 +62,7 @@
         let checkBackend = document.getElementById("checkBackend");
         let addNewUser = document.getElementById("addNewUser");
         let checkGetAll = document.getElementById("checkGetAll");
+        let checkGetAllByGender = document.getElementById("checkGetAllByGender");
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
         let received = document.getElementById("received");
@@ -86,13 +93,14 @@
                     if (data.error) {
                         output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;
                     } else {
-                        output.innerHTML += `<br><strong>Response from broker service</strong>: ${data.message}`;
+                        output.innerHTML += `<br><strong>Response from backend</strong>: ${data.message}`;
                     }
                 })
                 .catch((error) => {
                     output.innerHTML += "<br><br>Error: " + error;
                 })
         })
+
         checkGetAll.addEventListener("click", function () {
 
             const headers = new Headers();
@@ -111,7 +119,28 @@
                     if (data.error) {
                         output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;
                     } else {
-                        output.innerHTML += `<br><strong>Response from broker service</strong>: ${data.message}`;
+                        output.innerHTML += `<br><strong>Response from backend</strong>: ${data.message}`;
+                    }
+                })
+                .catch((error) => {
+                    output.innerHTML += "<br><br>Error: " + error;
+                })
+        })
+
+        checkGetAllByGender.addEventListener("click", function () {
+            const body = {
+                method: 'GET',
+            }
+
+            fetch("http:\/\/localhost:8080/users?gender=" + document.getElementById("gender").value, body)
+                .then((response) => response.json())
+                .then((data) => {
+                    sent.innerHTML = "empty get request";
+                    received.innerHTML = JSON.stringify(data, undefined, 4);
+                    if (data.error) {
+                        output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;
+                    } else {
+                        output.innerHTML += `<br><strong>Response from backend</strong>: ${data.message}`;
                     }
                 })
                 .catch((error) => {

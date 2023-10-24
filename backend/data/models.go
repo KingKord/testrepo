@@ -119,6 +119,43 @@ func (u *User) GetAll() ([]*User, error) {
 	return users, nil
 }
 
+func (u *User) GetAllUsersByGender(gender string) ([]*User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `select id, name, surname, patronymic, age, gender, nationality
+	from users where gender = $1 order by name`
+
+	rows, err := db.QueryContext(ctx, query, gender)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*User
+
+	for rows.Next() {
+		var user User
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Surname,
+			&user.Patronymic,
+			&user.Age,
+			&user.Gender,
+			&user.Nationality,
+		)
+		if err != nil {
+			log.Println("Error scanning", err)
+			return nil, err
+		}
+
+		users = append(users, &user)
+	}
+
+	return users, nil
+}
+
 func GetUserByName(name string) User {
 
 	return User{}

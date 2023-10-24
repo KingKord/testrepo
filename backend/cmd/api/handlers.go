@@ -123,17 +123,29 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-
+	// Get parameter "gender" from URL
+	gender := r.URL.Query().Get("gender")
 	var user data.User
-	users, err := user.GetAll()
+	var users []*data.User
+	var err error
+
+	if gender != "" {
+		users, err = user.GetAllUsersByGender(gender)
+	} else {
+		users, err = user.GetAll()
+	}
 	if err != nil {
 		app.errorJSON(w, err, http.StatusBadRequest)
 		return
 	}
 
+	if len(users) == 0 {
+		app.errorJSON(w, errors.New("no records in DB"))
+	}
+
 	payload := jsonResponse{
 		Error:   false,
-		Message: "Get all users:",
+		Message: fmt.Sprintf("Total Users: %d", len(users)),
 		Data:    users,
 	}
 	app.writeJSON(w, http.StatusOK, payload)
