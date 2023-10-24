@@ -7,7 +7,7 @@
                 <h1 class="mt-5">Test backend</h1>
                 <hr>
                 <a href="javascript:void(0)" id="checkBackend" class="btn btn-outline-secondary">Test Backend</a>
-                <a href="javascript:void(0)" id="authBrokerBtn" class="btn btn-outline-secondary">Test Auth</a>
+                <a href="javascript:void(0)" id="addNewUser" class="btn btn-outline-secondary">Test addNewUser</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -34,19 +34,16 @@
 {{define "js"}}
     <script>
         let checkBackend = document.getElementById("checkBackend");
-        let authBrokerBtn = document.getElementById("authBrokerBtn");
+        let addNewUser = document.getElementById("addNewUser");
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
         let received = document.getElementById("received");
 
 
-        authBrokerBtn.addEventListener("click", function () {
+        addNewUser.addEventListener("click", function () {
             const payload = {
-                action: "auth",
-                auth: {
-                    email: "admin@example.com",
-                    password: "asdfqwer",
-                }
+                name: "Dmitriy",
+                surname: "Ushakov",
             }
 
             const headers = new Headers();
@@ -59,7 +56,7 @@
                 headers: headers,
             }
 
-            fetch("http:\/\/localhost:8080/handle", body)
+            fetch("http:\/\/localhost:8080/new", body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = JSON.stringify(payload, undefined, 4);

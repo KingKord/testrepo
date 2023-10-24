@@ -1,8 +1,13 @@
 package data
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 var db *sql.DB
+
+const dbTimeout = time.Second * 3
 
 func New(dbPool *sql.DB) Models {
 	db = dbPool

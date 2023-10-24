@@ -21,6 +21,7 @@ func (app *Config) getRoutes() http.Handler {
 	mux.Use(middleware.Heartbeat("/ping"))
 
 	mux.Post("/", app.HeartBeat)
+	mux.Post("/new", app.PostNewUser)
 
 	return mux
 }

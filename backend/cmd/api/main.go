@@ -21,7 +21,8 @@ const webPort = "80"
 var counts int64
 
 type Config struct {
-	DB *sql.DB
+	DB     *sql.DB
+	Models data.Models
 }
 
 func main() {
@@ -36,7 +37,8 @@ func main() {
 
 	// set up config
 	app := Config{
-		DB: conn,
+		DB:     conn,
+		Models: data.New(conn),
 	}
 
 	srv := &http.Server{
