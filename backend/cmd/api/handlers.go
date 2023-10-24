@@ -108,14 +108,14 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 	user.Nationalize = mostProbableCountry
 
 	// in the end insert new user to the DB
-	_, err = user.Insert(user)
+	newID, err := user.Insert(user)
 	if err != nil {
 		app.errorJSON(w, err, http.StatusBadRequest)
 		return
 	}
 	payload := jsonResponse{
 		Error:   false,
-		Message: fmt.Sprintf("Add to DB user %s %d %s %s", jsonFromService.Name, user.Agify, user.Genderize, user.Nationalize),
+		Message: fmt.Sprintf("Add to DB user %s %d %s %s %d", jsonFromService.Name, user.Agify, user.Genderize, user.Nationalize, newID),
 		Data:    jsonFromService,
 	}
 

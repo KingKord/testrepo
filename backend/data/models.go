@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -35,9 +36,27 @@ type Models struct {
 }
 
 func (u *User) Insert(user User) (int, error) {
-	//ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
-	//defer cancel()
-	return 1, nil
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	var newID int
+	stmt := `insert into users (name, surname, patronymic, agify, genderize, nationalize)
+		values ($1, $2, $3, $4, $5, $6) returning id`
+
+	err := db.QueryRowContext(ctx, stmt,
+		user.Name,
+		user.Surname,
+		user.Patronymic,
+		string(rune(user.Agify)),
+		user.Genderize,
+		user.Nationalize,
+	).Scan(&newID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return newID, nil
 }
 
 func GetInfoFromOpenAPI(URL string) (*http.Response, error) {
