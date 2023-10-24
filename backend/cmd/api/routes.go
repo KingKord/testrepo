@@ -22,6 +22,7 @@ func (app *Config) getRoutes() http.Handler {
 
 	mux.Post("/", app.HeartBeat)
 	mux.Post("/new", app.PostNewUser)
+	mux.Get("/users", app.GetAllUsers)
 
 	return mux
 }

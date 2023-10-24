@@ -22,6 +22,11 @@
                         <input type="text" id="patronymic" name="patronymic">
                     </div>
                 </div>
+                <div class="row mt-1">
+                    <div class="col">
+                        <a href="javascript:void(0)" id="checkGetAll" class="btn btn-outline-secondary">Test checkGetAll</a>
+                    </div>
+                </div>
 
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
@@ -50,6 +55,7 @@
     <script>
         let checkBackend = document.getElementById("checkBackend");
         let addNewUser = document.getElementById("addNewUser");
+        let checkGetAll = document.getElementById("checkGetAll");
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
         let received = document.getElementById("received");
@@ -76,6 +82,31 @@
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                    received.innerHTML = JSON.stringify(data, undefined, 4);
+                    if (data.error) {
+                        output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;
+                    } else {
+                        output.innerHTML += `<br><strong>Response from broker service</strong>: ${data.message}`;
+                    }
+                })
+                .catch((error) => {
+                    output.innerHTML += "<br><br>Error: " + error;
+                })
+        })
+        checkGetAll.addEventListener("click", function () {
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+
+            const body = {
+                method: 'GET',
+            }
+
+            fetch("http:\/\/localhost:8080/users", body)
+                .then((response) => response.json())
+                .then((data) => {
+                    sent.innerHTML = "empty get request";
                     received.innerHTML = JSON.stringify(data, undefined, 4);
                     if (data.error) {
                         output.innerHTML += `<br><strong>Error:</strong> ${data.message}`;

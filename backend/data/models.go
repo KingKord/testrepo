@@ -48,7 +48,7 @@ func (u *User) Insert(user User) (int, error) {
 		user.Name,
 		user.Surname,
 		user.Patronymic,
-		string(rune(user.Age)),
+		user.Age,
 		user.Gender,
 		user.Nationality,
 	).Scan(&newID)
@@ -86,7 +86,7 @@ func (u *User) GetAll() ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `select id, name, surname, patronymic, agify, genderize, nationalize
+	query := `select id, name, surname, patronymic, age, gender, nationality
 	from users order by name`
 
 	rows, err := db.QueryContext(ctx, query)

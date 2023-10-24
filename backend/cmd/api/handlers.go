@@ -121,3 +121,20 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 
 	app.writeJSON(w, http.StatusAccepted, payload)
 }
+
+func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+
+	var user data.User
+	users, err := user.GetAll()
+	if err != nil {
+		app.errorJSON(w, err, http.StatusBadRequest)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: "Get all users:",
+		Data:    users,
+	}
+	app.writeJSON(w, http.StatusOK, payload)
+}
