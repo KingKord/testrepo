@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -75,9 +74,6 @@ func GetInfoFromOpenAPI(URL string) (*http.Response, error) {
 	if response.StatusCode != http.StatusOK {
 		return nil, errors.New("can't get info from API")
 	}
-
-	fmt.Println("URL:", URL)
-	fmt.Println("Response Status:", response.Status)
 
 	return response, nil
 }

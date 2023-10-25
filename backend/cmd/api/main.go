@@ -46,7 +46,7 @@ func main() {
 		Handler: app.getRoutes(),
 	}
 
-	println("Starting web server on port", webPort)
+	log.Println("Starting web server on port", webPort)
 	err := srv.ListenAndServe()
 	if err != nil {
 		panic(err)

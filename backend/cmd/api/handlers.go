@@ -11,6 +11,7 @@ import (
 )
 
 func (app *Config) HeartBeat(w http.ResponseWriter, r *http.Request) {
+	log.Println("hit the / (home) page")
 	payload := jsonResponse{
 		Error:   false,
 		Message: "Successfully hit the backend",
@@ -20,6 +21,7 @@ func (app *Config) HeartBeat(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
+	log.Println("hit the /new page")
 	var requestPayload struct {
 		Name       string `json:"name"`
 		Surname    string `json:"surname"`
@@ -124,6 +126,7 @@ func (app *Config) PostNewUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	log.Println("hit the /users page")
 	// Get parameter "gender" from URL
 	gender := r.URL.Query().Get("gender")
 	page := r.URL.Query().Get("page")
@@ -170,7 +173,7 @@ func (app *Config) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	if len(users) == 0 {
 		app.errorJSON(w, errors.New("no records in DB"))
 	}
-
+	log.Printf("Successfully got %d records from DB", len(users))
 	payload := jsonResponse{
 		Error:   false,
 		Message: fmt.Sprintf("Total Users: %d", len(users)),
@@ -191,6 +194,7 @@ func (app *Config) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	var user data.User
 
 	err = user.DeleteByID(id)
+	log.Printf("Deleted user in DB under id %d\n", id)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
@@ -232,6 +236,7 @@ func (app *Config) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		Nationality: requestPayload.Nationality,
 	}
 	err = user.Update()
+	log.Printf("Updated user under id %d", user.ID)
 	if err != nil {
 		return
 	}
