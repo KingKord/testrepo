@@ -9,8 +9,8 @@ import (
 )
 
 func MigrateUp() {
-	dbURL := "postgres://postgres:password@postgres:5432/users?sslmode=disable"
-	migrationPath := "file:///app/migrations"
+	dbURL := os.Getenv("dbURL")
+	migrationPath := os.Getenv("migrationPath")
 
 	// Create a new instance of migrate.
 	m, err := migrate.New(migrationPath, dbURL)
